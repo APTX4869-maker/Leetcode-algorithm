@@ -2,7 +2,9 @@
 
 
 
-###1 -- 思路 ： 双指针&快排
+### 1.
+
+###### 思路 ： 双指针&快排
 
 > #### [283. 移动零](https://leetcode-cn.com/problems/move-zeroes/)
 >
@@ -24,7 +26,7 @@
 输出: [0]
 ```
 
-题解：
+###### 题解：
 
 ~~~ java
 class Solution {
@@ -43,4 +45,65 @@ class Solution {
     }
 }
 ~~~
+
+
+
+### 2 
+
+思路：翻转数组
+
+> #### [189. 轮转数组](https://leetcode-cn.com/problems/rotate-array/)
+>
+> 给你一个数组，将数组中的元素向右轮转 `k` 个位置，其中 `k` 是非负数。
+
+###### 示例 1:
+
+~~~ 
+输入: nums = [1,2,3,4,5,6,7], k = 3
+输出: [5,6,7,1,2,3,4]
+解释:
+向右轮转 1 步: [7,1,2,3,4,5,6]
+向右轮转 2 步: [6,7,1,2,3,4,5]
+向右轮转 3 步: [5,6,7,1,2,3,4]
+~~~
+
+###### 示例 2:
+
+~~~ 
+输入：nums = [-1,-100,3,99], k = 2
+输出：[3,99,-1,-100]
+解释: 
+向右轮转 1 步: [99,-1,-100,3]
+向右轮转 2 步: [3,99,-1,-100]
+~~~
+
+###### 题解：
+
+~~~ java
+class Solution {
+    public void rotate(int[] nums, int k) {
+    int size = nums.length;
+    if(size < 2) return;
+    k = k % size; //注意有可能k远大于数组长度 需要取模缩小范围
+    reverse(nums,0,size-1); //整个翻转
+    reverse(nums,0,k-1);
+    reverse(nums,k,size-1);
+       
+    }
+    //翻转数组范围内的内容
+    public int[] reverse(int[] nums,int start,int end){
+        int temp = 0;
+        while(start <= end){
+            temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start ++ ;
+            end --;
+        }
+        return nums;
+    }
+}
+~~~
+
+
 
