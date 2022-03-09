@@ -105,3 +105,63 @@ class Solution {
 }
 ~~~
 
+
+
+### 3.反转字符串中的单词III
+
+思路：双指针，遇到空格反转
+
+> #### [557. 反转字符串中的单词 III](https://leetcode-cn.com/problems/reverse-words-in-a-string-iii/)
+>
+> 给定一个字符串 `s` ，你需要反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。
+
+##### 示例 1：
+
+~~~ 
+输入：s = "Let's take LeetCode contest"
+输出："s'teL ekat edoCteeL tsetnoc"
+~~~
+
+##### 示例 2:
+
+~~~ 
+输入： s = "God Ding"
+输出："doG gniD"
+~~~
+
+
+
+##### 题解
+
+~~~ java
+class Solution {
+    public String reverseWords(String s) {
+        //双指针方法解决
+        char[] chars = s.toCharArray(); //注意这个方法 直接转为char数组
+        int size = s.length();
+        int left = 0;
+        for(int i = 0; i < size ; i++){
+            char current = chars[i];
+            if(current == ' '){
+                reverse(chars,left,i-1); //遇到空格 说明前面的一段可以翻转了
+                left = i+1;
+            }else if(i == size - 1){
+               reverse(chars,left,i) ; //到最后了 直接翻转
+            }
+        }
+        return String.valueOf(chars); //注意这个方法 直接转为string类型
+    }
+    public void reverse(char[] chars ,int start,int end){ //翻转的通用函数
+        while(start < end){
+            char temp = chars[start];
+            chars[start]=chars[end];
+            chars[end] = temp;
+            start ++ ;
+            end --;
+        }
+    }
+}
+~~~
+
+
+
