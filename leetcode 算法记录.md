@@ -165,3 +165,64 @@ class Solution {
 
 
 
+### 4.字符串的排列
+
+思路：滑动窗口，包含26个字母的数组
+
+> #### [567. 字符串的排列](https://leetcode-cn.com/problems/permutation-in-string/)
+>
+> 给你两个字符串 s1 和 s2 ，写一个函数来判断 s2 是否包含 s1 的排列。如果是，返回 true ；否则，返回 false 。
+>
+> 换句话说，s1 的排列之一是 s2 的 子串 
+
+
+
+##### 示例 1：
+
+~~~ 
+输入：s1 = "ab" s2 = "eidbaooo"
+输出：true
+解释：s2 包含 s1 的排列之一 ("ba").
+~~~
+
+##### 示例 2：
+
+~~~ 
+输入：s1= "ab" s2 = "eidboaoo"
+输出：false
+~~~
+
+
+
+##### 题解：
+
+~~~ java
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        //滑动窗口方法 同时利用了这是26个小写字母的题目
+        int len1 = s1.length(),len2 = s2.length();
+        if(len1 > len2) return false; //如果s1长度大于s2 说明s2不可能包含s1 直接返回false
+        int[] arr1 = new int[26],arr2 = new int[26];
+
+        //两个数组一直保持s1的字符个数 滑动窗口来比较
+        for(int i = 0; i< len1 ; i++){
+            arr1[s1.charAt(i) - 'a'] ++; //相当于是有26个字符对应的数组 每次出现哪个字符 就在该字符的数组位置加一
+            arr2[s2.charAt(i) - 'a'] ++;
+        }
+        int left = 0,right = len1 - 1;//s2字符串的指针
+        while(right < len2){
+            if(Arrays.equals(arr1,arr2)) return true; //遍历前先判断两个数组是否相同
+            right ++;
+            if(right != len2){ //防止right移动后超出范围
+                arr2[s2.charAt(right) - 'a'] ++;
+            }
+            arr2[s2.charAt(left) - 'a'] --; //之前的left 位置因为需要右移动一位 所以之前位置的字母的数组位置减一
+            left ++;//左边也移动一位
+        }
+        return false;   
+    }
+}
+~~~
+
+
+
