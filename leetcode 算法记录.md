@@ -1,10 +1,14 @@
 ### leetcode 算法记录
 
+[toc]
+
+
+
 
 
 ### 1.移动零
 
-###### 思路 ： 双指针&快排
+**思路：** 双指针&快排
 
 > #### [283. 移动零](https://leetcode-cn.com/problems/move-zeroes/)
 >
@@ -26,7 +30,7 @@
 输出: [0]
 ```
 
-###### 题解：
+**题解：**
 
 ~~~ java
 class Solution {
@@ -56,7 +60,7 @@ class Solution {
 >
 > 给你一个数组，将数组中的元素向右轮转 `k` 个位置，其中 `k` 是非负数。
 
-###### 示例 1:
+**示例 1:**
 
 ~~~ 
 输入: nums = [1,2,3,4,5,6,7], k = 3
@@ -67,7 +71,7 @@ class Solution {
 向右轮转 3 步: [5,6,7,1,2,3,4]
 ~~~
 
-###### 示例 2:
+**示例 2:**
 
 ~~~ 
 输入：nums = [-1,-100,3,99], k = 2
@@ -77,7 +81,7 @@ class Solution {
 向右轮转 2 步: [3,99,-1,-100]
 ~~~
 
-###### 题解：
+**题解：**
 
 ~~~ java
 class Solution {
@@ -115,23 +119,21 @@ class Solution {
 >
 > 给定一个字符串 `s` ，你需要反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。
 
-##### 示例 1：
+**示例 1：**
 
 ~~~ 
 输入：s = "Let's take LeetCode contest"
 输出："s'teL ekat edoCteeL tsetnoc"
 ~~~
 
-##### 示例 2:
+**示例 2:**
 
 ~~~ 
 输入： s = "God Ding"
 输出："doG gniD"
 ~~~
 
-
-
-##### 题解
+**题解**
 
 ~~~ java
 class Solution {
@@ -175,9 +177,7 @@ class Solution {
 >
 > 换句话说，s1 的排列之一是 s2 的 子串 
 
-
-
-##### 示例 1：
+**示例 1：**
 
 ~~~ 
 输入：s1 = "ab" s2 = "eidbaooo"
@@ -185,16 +185,14 @@ class Solution {
 解释：s2 包含 s1 的排列之一 ("ba").
 ~~~
 
-##### 示例 2：
+**示例 2：**
 
 ~~~ 
 输入：s1= "ab" s2 = "eidboaoo"
 输出：false
 ~~~
 
-
-
-##### 题解：
+**题解：**
 
 ~~~ java
 class Solution {
@@ -315,7 +313,7 @@ class Solution {
 
 
 
-### 6. 填充每一个节点的下一个右侧节点的指针
+### 6.填充每一个节点的下一个右侧节点的指针
 
 **思路：** 递归方法
 
@@ -462,6 +460,534 @@ class Solution {
         // 在深度遍历右节点
         root1.right = mergeDFS(root1.right, root2.right);
         return root1;
+    }
+}
+~~~
+
+
+
+### 8.合并两个有序链表
+
+**思路：** 递归
+
+
+
+> #### [21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/)
+>
+> 将两个升序链表合并为一个新的 **升序** 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+**示例 1：**
+
+```
+输入：l1 = [1,2,4], l2 = [1,3,4]
+输出：[1,1,2,3,4,4]
+```
+
+**示例 2：**
+
+```
+输入：l1 = [], l2 = []
+输出：[]
+```
+
+**示例 3：**
+
+```
+输入：l1 = [], l2 = [0]
+输出：[0]
+```
+
+
+
+**题解：**
+
+~~~ java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        if(list2 == null) return list1;
+        if(list1 == null) return list2;
+
+        if(list1.val >= list2.val){
+            list2.next = mergeTwoLists(list1,list2.next);
+            return list2;
+        }else {
+            list1.next = mergeTwoLists(list1.next,list2);
+            return list1 ;
+        }
+
+    }
+}
+~~~
+
+
+
+### 9.反转链表
+
+**思路：**普通的遍历交换位置 & 递归
+
+
+
+> #### [206. 反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)
+>
+> 给你单链表的头节点 `head` ，请你反转链表，并返回反转后的链表。
+
+**示例 1：**
+
+```
+输入：head = [1,2,3,4,5]
+输出：[5,4,3,2,1]
+```
+
+**示例 2：**
+
+```
+输入：head = [1,2]
+输出：[2,1]
+```
+
+**示例 3：**
+
+```
+输入：head = []
+输出：[]
+```
+
+**题解：**
+
+~~~ java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        if (head == null) return null;
+        ListNode temp = null;
+        ListNode cur = head;
+        ListNode pre = null;
+        while(cur != null){
+            temp = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = temp;
+        }
+        return pre;
+
+    }
+}
+~~~
+
+递归方法解决：
+
+~~~ java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseList(ListNode head) {
+      //递归方法解决
+      if(head == null || head.next == null) return head ;
+      ListNode h = reverseList(head.next); //一直返回的都是一个节点 因为reverseList的返回值就是翻转后的头节点 所以最后返回它即可
+      head.next.next = head ;//此时遍历到末尾 返回上一层 倒数第二个节点 head.next是最后一个节点 head.next.next表示最后一个节点指向倒数第二个
+      head.next = null ;//断开了此时倒数第二个节点原本指向的最后一个节点的指针
+      return h ;
+    }
+}
+~~~
+
+
+
+### 10.组合
+
+**思路：** 回溯法
+
+
+
+> #### [77. 组合](https://leetcode-cn.com/problems/combinations/)
+>
+> 给定两个整数 `n` 和 `k`，返回范围 `[1, n]` 中所有可能的 `k` 个数的组合。
+>
+> 你可以按 **任何顺序** 返回答案。
+
+**示例 1：**
+
+~~~ 
+输入：n = 4, k = 2
+输出：
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+~~~
+
+**示例 2：**
+
+~~~ 
+输入：n = 1, k = 1
+输出：[[1]]
+~~~
+
+
+
+**题解：**
+
+
+
+~~~ java
+class Solution {
+    List<List<Integer>> res = new ArrayList<>();
+    List<Integer> list = new ArrayList<>();
+    int n ,k;
+    public List<List<Integer>> combine(int n, int k) {
+        //回溯法
+        this.n = n;
+        this.k = k;
+        backTracking(1);//回溯函数，传入起始数字
+        return res;
+    }
+    private void backTracking(int index){
+        if(list.size() == k){
+            //退出条件
+            res.add(new ArrayList<>(list));
+            return ;
+        }
+        for(int i = index ; i <= n ;i++){
+            list.add(i);
+            backTracking(i+1);
+            //回溯
+            list.remove(list.size()-1);
+        }
+    }
+}
+~~~
+
+
+
+### 11.全排列
+
+**思路：** 回溯法
+
+
+
+> #### [46. 全排列](https://leetcode-cn.com/problems/permutations/)
+>
+> 给定一个不含重复数字的数组 `nums` ，返回其 *所有可能的全排列* 。你可以 **按任意顺序** 返回答案。
+
+
+
+**示例 1：**
+
+~~~ 
+输入：nums = [1,2,3]
+输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+~~~
+
+**示例 2：**
+
+~~~ 
+输入：nums = [0,1]
+输出：[[0,1],[1,0]]
+~~~
+
+**示例 3：**
+
+~~~ 
+输入：nums = [1]
+输出：[[1]]
+~~~
+
+**题解**
+
+~~~ java
+class Solution {
+    List<List<Integer>> res = new ArrayList<>();
+    List<Integer> list = new ArrayList<>();
+    int size ;
+    public List<List<Integer>> permute(int[] nums) {
+        size = nums.length;
+        dfs(nums,size);
+        return res;
+    }
+    private void dfs(int[] nums , int size){
+        if(list.size() == size){
+            //跳出条件
+            res.add(new ArrayList<>(list));
+            return ;
+        }
+        for(int i = 0 ;i < size;i++){
+            if(list.contains(nums[i])) continue;
+            list.add(nums[i]);
+            dfs(nums,size);
+            list.remove(list.size() - 1);
+        }
+    }
+}
+~~~
+
+
+
+### 12.字母大小写全排列
+
+**思路：** 回溯法 & character的api
+
+
+
+> #### [784. 字母大小写全排列](https://leetcode-cn.com/problems/letter-case-permutation/)
+>
+> 给定一个字符串 `s` ，通过将字符串 `s` 中的每个字母转变大小写，我们可以获得一个新的字符串。
+>
+> 返回 *所有可能得到的字符串集合* 。以 **任意顺序** 返回输出。
+
+**示例 1:**
+
+~~~ 
+输入：s = "a1b2"
+输出：["a1b2", "a1B2", "A1b2", "A1B2"]
+~~~
+
+**示例 2:**
+
+~~~~
+输入: s = "3z4"
+输出: ["3z4","3Z4"]
+~~~~
+
+
+
+**题解：**
+
+
+
+~~~ java
+class Solution {
+    List<String> res = new ArrayList<>();
+    public List<String> letterCasePermutation(String s) {
+        char[] chars = s.toCharArray();
+        int size = s.length();
+        dfs(chars,size,0);
+        return res;
+    }
+    private void dfs(char[] chars,int size,int index){
+        if(index == size) { //已经遍历完数组了 将修改了元素的数组变为string放入结果list中
+            res.add(new String(chars));
+            return ;
+        }
+        char c = chars[index];
+        if(Character.isLetter(c)){ //注意这个api
+            chars[index] = Character.toUpperCase(c);//此时有将元素变大变小的两种方案
+            dfs(chars,size,index+1);
+            chars[index] = Character.toLowerCase(c);
+            dfs(chars,size,index+1);
+        }else { //当不满足是字符时，直接继续往后遍历
+            dfs(chars,size,index+1);
+        }
+        
+    }
+}
+~~~
+
+另一种模版化的写法
+
+~~~ java
+class Solution {
+    List<String> res = new ArrayList<>();
+    StringBuilder path = new StringBuilder(); //多了一个sb来存放 
+    public List<String> letterCasePermutation(String s) {
+        backtrace(s, 0);
+        return res;
+    }
+
+    void backtrace(String s, int index) {
+        if ( path.length() == s.length() ) {
+            res.add(path.toString());
+            return;
+        }
+        char ch = s.charAt(index);
+        // 数字，直接回溯
+        if ( Character.isDigit(ch) ) {
+            path.append(ch);
+            backtrace(s, index+1);
+            path.deleteCharAt(path.length()-1);
+        } else {
+            // 字母，两个回溯路线
+            path.append(Character.toLowerCase(ch));
+            backtrace(s, index+1);
+            path.deleteCharAt(path.length()-1);
+
+            path.append(Character.toUpperCase(ch));
+            backtrace(s, index+1);
+            path.deleteCharAt(path.length()-1);            
+        }
+    }
+}
+~~~
+
+
+
+### 13.爬楼梯
+
+**思路：** 动态规划
+
+
+
+> #### [70. 爬楼梯](https://leetcode-cn.com/problems/climbing-stairs/)
+>
+> 假设你正在爬楼梯。需要 `n` 阶你才能到达楼顶。
+>
+> 每次你可以爬 `1` 或 `2` 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+
+
+
+**示例 1：**
+
+```
+输入：n = 2
+输出：2
+解释：有两种方法可以爬到楼顶。
+1. 1 阶 + 1 阶
+2. 2 阶
+```
+
+**示例 2：**
+
+~~~ 
+输入：n = 3
+输出：3
+解释：有三种方法可以爬到楼顶。
+
+1. 1 阶 + 1 阶 + 1 阶
+2. 1 阶 + 2 阶
+3. 2 阶 + 1 阶
+~~~
+
+
+
+**题解：**
+
+
+
+~~~ java
+class Solution {
+    public int climbStairs(int n) {
+        //动态规划
+        int[] dp = new int[n+1];
+        dp[0] = 1;
+        dp[1] = 1;
+        if(n <= 1) return dp[n];
+        for(int i = 2;i <= n ;i++){
+            dp[i] = dp[i-1] + dp[i-2];
+        }
+
+        return dp[n];
+    }
+
+}
+~~~
+
+
+
+### 14.三角形最小路径和
+
+**思路：** 动态规划（较难）
+
+
+
+> #### [120. 三角形最小路径和](https://leetcode-cn.com/problems/triangle/)
+>
+> 给定一个三角形 triangle ，找出自顶向下的最小路径和。
+>
+> 每一步只能移动到下一行中相邻的结点上。相邻的结点 在这里指的是 下标 与 上一层结点下标 相同或者等于 上一层结点下标 + 1 的两个结点。也就是说，如果正位于当前行的下标 i ，那么下一步可以移动到下一行的下标 i 或 i + 1 。
+
+
+
+**示例 1：**
+
+~~~
+输入：triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]
+输出：11
+解释：如下面简图所示：
+   2
+  3 4
+ 6 5 7
+4 1 8 3
+自顶向下的最小路径和为 11（即，2 + 3 + 5 + 1 = 11）。
+~~~
+
+**示例 2：**
+
+```
+输入：triangle = [[-10]]
+输出：-10
+```
+
+
+
+**题解：**
+
+
+
+~~~ java
+class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        if(triangle == null || triangle.size() == 0) return 0;
+        //动态规划 看成是二维数组来计算
+        int row = triangle.size();
+        int col = triangle.get(row - 1).size();
+        //从上往下
+        int[][] dp = new int[row][col];
+
+        dp[0][0] = triangle.get(0).get(0); //0行0列
+        int res = Integer.MAX_VALUE; //用来做对比的 拿到数组中的最小值
+        for(int i = 1 ; i < row ; i++){
+            for(int j = 0; j < triangle.get(i).size() ; j++){
+                //特殊情况 一个是最左边时
+                if (j == 0){
+                    dp[i][j] = dp[i-1][j] + triangle.get(i).get(j);
+                }
+                //最右边时
+                else if(j == triangle.get(i).size() - 1){
+                    dp[i][j] = dp[i-1][triangle.get(i-1).size() - 1] + triangle.get(i).get(j);
+                }else {
+                    //此时正上方和左前方都有可能是最小值
+                    dp[i][j] = Math.min(dp[i-1][j],dp[i-1][j-1]) + triangle.get(i).get(j);
+                }
+
+            }
+        }
+
+        for(int k = 0 ; k < col ;k++){
+            res = Math.min(dp[row - 1][k],res);
+        }
+        return res;
+
+
     }
 }
 ~~~
