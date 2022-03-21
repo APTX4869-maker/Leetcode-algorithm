@@ -2,6 +2,8 @@
 
 [toc]
 
+![image-20220318223444726](/Users/alyx/Library/Application Support/typora-user-images/image-20220318223444726.png)
+
 
 
 
@@ -971,7 +973,7 @@ class Solution {
                 if (j == 0){
                     dp[i][j] = dp[i-1][j] + triangle.get(i).get(j);
                 }
-                //最右边时
+                //最右边时 左上方 则坐标位置在现在的列位置-1
                 else if(j == triangle.get(i).size() - 1){
                     dp[i][j] = dp[i-1][triangle.get(i-1).size() - 1] + triangle.get(i).get(j);
                 }else {
@@ -988,6 +990,614 @@ class Solution {
         return res;
 
 
+    }
+}
+~~~
+
+
+
+### 15. 2的幂
+
+**思路：** 一直除2
+
+
+
+> #### [231. 2 的幂](https://leetcode-cn.com/problems/power-of-two/)
+>
+> 给你一个整数 n，请你判断该整数是否是 2 的幂次方。如果是，返回 true ；否则，返回 false 。
+>
+> 如果存在一个整数 x 使得 n == 2x ，则认为 n 是 2 的幂次方。
+
+
+
+**示例 1：**
+
+```
+输入：n = 1
+输出：true
+解释：20 = 1
+```
+
+**示例 2：**
+
+```
+输入：n = 16
+输出：true
+解释：24 = 16
+```
+
+**示例 3：**
+
+```
+输入：n = 3
+输出：false
+```
+
+
+
+**题解：**
+
+
+
+~~~ java
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        if(n <= 0) return false ;
+        if (n== 1) return true ;
+
+        //一直除  2/2 =1  6 % 2 = 0 6/2= 3 3 % 2 != 0
+        while(n != 1){
+            if( n % 2 != 0) return false ;
+            n = n / 2;
+        }
+        return true ;
+
+    }
+}
+~~~
+
+
+
+### 16.lru缓存 **
+
+**思路：** 实现一个双向链表和map，链表用来记录插入的顺序
+
+
+
+> #### [146. LRU 缓存](https://leetcode-cn.com/problems/lru-cache/)
+>
+> 请你设计并实现一个满足  LRU (最近最少使用) 缓存 约束的数据结构。
+> 实现 LRUCache 类：
+> LRUCache(int capacity) 以 正整数 作为容量 capacity 初始化 LRU 缓存
+> int get(int key) 如果关键字 key 存在于缓存中，则返回关键字的值，否则返回 -1 。
+> void put(int key, int value) 如果关键字 key 已经存在，则变更其数据值 value ；如果不存在，则向缓存中插入该组 key-value 。如果插入操作导致关键字数量超过 capacity ，则应该 逐出 最久未使用的关键字。
+> 函数 get 和 put 必须以 O(1) 的平均时间复杂度运行。
+
+
+
+**示例：**
+
+~~~ 
+输入
+["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+输出
+[null, null, null, 1, null, -1, null, -1, 3, 4]
+
+解释
+LRUCache lRUCache = new LRUCache(2);
+lRUCache.put(1, 1); // 缓存是 {1=1}
+lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+lRUCache.get(1);    // 返回 1
+lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+lRUCache.get(2);    // 返回 -1 (未找到)
+lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+lRUCache.get(1);    // 返回 -1 (未找到)
+lRUCache.get(3);    // 返回 3
+lRUCache.get(4);    // 返回 4
+~~~
+
+
+
+**题解**
+
+
+
+1.记录一个超时的题解，容易理解
+
+
+
+~~~ java
+class LRUCache {
+    int capacity;
+    LinkedList<Integer> list = new LinkedList<>(); //用来按顺序存放key
+    Map<Integer,Integer> map ;
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        this.map = new HashMap<>(capacity); //创建存放key-value的map结构
+    }
+    
+    public int get(int key) {
+        if(!list.contains(key)) return -1; //如果没有 直接返回-1
+        //使用到了这个元素 所以list的这个元素顺序就要提前 先删除再加上
+        //list.remove(Integer.valueOf(key)); //这里注意 删除有两个api 一个是remove(int index) 这会按照指针顺序删除链表元素 remove(object o) 这个会删除链表的某个元素 之所以不直接用key就是为了这问题
+        //list.addLast(key);
+        updateList(key);
+        return map.get(key);
+    }
+    
+    public void put(int key, int value) {
+        //几种情况 一个是put原本存在的数据
+        if(list.contains(key)) {
+          updateList(key);
+            map.put(key,value); //更新一下
+        }else {
+            //不是原本存在 需要判断是否超过容量大小
+            //如果此时的容量满了 先删除 再put
+            if(list.size() == capacity){
+                int k = list.removeFirst();//删除最前面的元素 这肯定是最少使用的 返回的值就是删除的key
+                map.remove(k);//在map中清空这个key-value
+                map.put(key,value);
+                list.add(key);
+            }else{
+                //没有超过容量 直接加入就行
+                list.addLast(key);
+                map.put(key,value);
+            }
+        }
+    }
+    public void updateList(int key){
+            list.remove(Integer.valueOf(key));
+            list.addLast(key);
+    }
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+~~~
+
+
+
+2.大佬的解法
+
+
+
+~~~ java
+class LRUCache {
+    
+    int capacity ;
+    Map<Integer,LinkedNode> map = new HashMap<>();
+    LinkedNode head = new LinkedNode(0,0);
+    LinkedNode tail = new LinkedNode(0,0);
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        head.next = tail; //前后连接
+        tail.front = head;
+    }
+    
+    public int get(int key) {
+        if(map.containsKey(key)){
+            LinkedNode node = map.get(key);
+            moveToHead(node);
+            return node.val;
+        }else {
+            return -1;
+        }
+    }
+    
+    public void put(int key, int value) {
+        //先判断是否map已存在该元素
+        if(!map.containsKey(key)){ //如果不存在 
+            if(map.size() == capacity){ //此时无法插入 需要去掉linkedNode的tail前面的一个节点 同时在linkedNode更新插入的节点
+                deleteLastNode(); //删除最后的节点
+            }
+            //然后更新linkedNode 
+            LinkedNode temp = head.next;
+            LinkedNode newNode = new LinkedNode(key,value);
+            head.next = newNode;
+            newNode.front = head;
+            newNode.next = temp; //将新的节点插到head的后面
+            temp.front = newNode;
+            map.put(key,newNode);
+        }else {
+            //如果存在
+            LinkedNode tempNode = map.get(key);
+            tempNode.val = value; //更新map中的linkedNode 的 value
+            //更新节点位置到head 后面
+            moveToHead(tempNode);
+
+        }
+    }
+    private void deleteLastNode(){
+        LinkedNode temp = tail.front;
+        LinkedNode f = temp.front;
+        f.next = tail;
+        tail.front = f;
+        map.remove(temp.key);
+    }
+    private void moveToHead(LinkedNode node){
+        //先断掉现在这个node的前后连接
+        node.front.next = node.next;
+        node.next.front = node.front;
+        //然后将这个node接在head后面
+        LinkedNode temp = head.next;
+        head.next = node;
+        node.front = head;
+        node.next = temp;
+        temp.front = node;
+    }
+}
+
+class LinkedNode{
+    LinkedNode next; //后指针
+    LinkedNode front; //前指针
+    int key;
+    int val;
+    public LinkedNode(int key,int val){
+        this.key = key;
+        this.val = val;
+    }
+
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+~~~
+
+
+
+### 17.只出现一次的数字
+
+**思路：** 异或
+
+
+
+> #### [136. 只出现一次的数字](https://leetcode-cn.com/problems/single-number/)
+>
+> 给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+>
+> 说明：
+>
+> 你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？//注意不能使用额外空间 还要有线性复杂度
+
+**示例 1:**
+
+```
+输入: [2,2,1]
+输出: 1
+```
+
+**示例 2:**
+
+```
+输入: [4,1,2,1,2]
+输出: 4
+```
+
+
+
+**题解：**
+
+
+
+~~~ java
+class Solution {
+    public int singleNumber(int[] nums) {
+        //参考大佬的异或 异或有几个性质：1.a ^ a = 0 2. a ^ 0 = a 3.异或满足结合律和交换律
+        int res = nums[0];
+        for(int i = 1; i < nums.length;i++){
+            res = res ^ nums[i]; //^是异或符号
+        }
+        return res;
+    }
+}
+~~~
+
+
+
+### 18.k个一组翻转链表
+
+
+
+**思路：** 递归 & 栈
+
+
+
+> #### [25. K 个一组翻转链表](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)
+>
+> 给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
+>
+> k 是一个正整数，它的值小于或等于链表的长度。
+>
+> 如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+>
+> 进阶：
+>
+> 你可以设计一个只使用常数额外空间的算法来解决此问题吗？
+> 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+
+
+
+**示例 1：**
+
+```
+输入：head = [1,2,3,4,5], k = 2
+输出：[2,1,4,3,5]
+```
+
+**示例 2：**
+
+```
+输入：head = [1,2,3,4,5], k = 3
+输出：[3,2,1,4,5]
+```
+
+
+
+**题解：**
+
+第一种方式 便于理解 但是时间复杂度高
+
+~~~ java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    Stack<ListNode> stack = new Stack<>(); //用来将遍历的节点压栈
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if(head == null || head.next == null) return head;//只有一个元素或者为空
+        
+        int localk = k;
+        ListNode dummy = new ListNode(0);
+        ListNode pre = dummy;
+        ListNode cur = head;
+
+        while(localk > 0 && cur != null){
+            stack.push(cur);
+            cur = cur.next;
+            localk --;
+        }
+        if (localk > 0) return head; //此时说明都遍历完了 cur == null 还没有到到k个一组 直接原路返回
+
+        while(!stack.isEmpty()){
+            pre.next = stack.pop();
+            pre = pre.next;
+        }
+        pre.next = reverseKGroup(cur,k); //此时的cur在下一次遍历的head处 
+        return dummy.next;
+
+
+    }
+}
+~~~
+
+
+
+第二种解法，时间复杂度低，没有使用额外的空间 递归方式
+
+~~~ java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if(head == null || head.next == null) return head;//只有一个元素或者为空
+        ListNode index = head; 
+        int localk = k;
+        while(localk > 0){
+            if(index == null) return head;//此时表示localk != 0 说明链表太短了 小于k 此时直接返回head 不翻转了
+            index = index.next;//移动 跳出循环后 index在k个节点的的下一个
+            localk --;
+        }
+        ListNode newHead = reverse(head,index); //头尾翻转 前闭后开
+        head.next = reverseKGroup(index,k);//这里要注意 是head.next = xx
+        return newHead;
+
+    }
+    private ListNode reverse(ListNode head,ListNode index){
+        //翻转链表
+        ListNode pre = null , next = null;
+        while(head != index){
+            next = head.next ; //暂存
+            head.next = pre;//当前的head指向后面的pre节点
+            pre = head;
+            head = next;//pre head 都向前移动
+        }
+        return pre ;
+
+
+    }
+}
+~~~
+
+
+
+### 19.二叉树的锯齿形层序遍历
+
+**思路：** 广度遍历
+
+
+
+> #### [103. 二叉树的锯齿形层序遍历](https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal/)
+>
+> 给你二叉树的根节点 `root` ，返回其节点值的 **锯齿形层序遍历** 。（即先从左往右，再从右往左进行下一层遍历，以此类推，层与层之间交替进行）。
+
+**示例 1：**
+
+```
+输入：root = [3,9,20,null,null,15,7]
+输出：[[3],[20,9],[15,7]]
+```
+
+**示例 2：**
+
+```
+输入：root = [1]
+输出：[[1]]
+```
+
+**示例 3：**
+
+```
+输入：root = []
+输出：[]
+```
+
+
+
+**题解：**
+
+
+
+~~~ java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<List<Integer>> res = new ArrayList<>();
+    Queue<TreeNode> queue = new LinkedList<>();
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        if(root == null) return res;
+    //广度遍历 偶数从左往右 奇数从右往左
+        int level = 0;
+        queue.add(root);
+        dfs(root,level);
+        return res;
+
+    }
+    private void dfs(TreeNode root,int level){
+        while(queue.size() > 0){
+            List<Integer> list = new ArrayList<>();
+            int size = queue.size();
+            for(int i = 0; i< size ; i++){
+                TreeNode tempNode = queue.poll(); 
+                if(level % 2 == 0){
+                    list.add(tempNode.val); //偶数从左往右放入list 默认是append到list后面
+                }else {
+                    list.add(0,tempNode.val); //不断将新的value放到list的index=0的首位 实现倒序
+                }
+                if (tempNode.left != null) queue.add(tempNode.left);
+                if (tempNode.right != null) queue.add(tempNode.right);
+            }
+            res.add(new ArrayList<>(list));
+            level ++; //遍历完一层了 层数加一
+        }
+
+    }
+}
+~~~
+
+
+
+### 20.排序数组
+
+
+
+**思路**：一种是直接调用Arrays.sort()来排序，但面试肯定不会这么简单，使用快排来实现
+
+
+
+> #### [912. 排序数组](https://leetcode-cn.com/problems/sort-an-array/)
+>
+> 给你一个整数数组 `nums`，请你将该数组升序排列。
+
+
+
+**示例 1：**
+
+```
+输入：nums = [5,2,3,1]
+输出：[1,2,3,5]
+```
+
+**示例 2：**
+
+```
+输入：nums = [5,1,1,2,0,0]
+输出：[0,0,1,1,2,5]
+```
+
+
+
+**题解：**
+
+
+
+~~~ java
+class Solution {
+    public int[] sortArray(int[] nums) {
+        // int[] res = new int[nums.length];
+        // PriorityQueue<Integer> queue = new PriorityQueue<>((o1,o2) -> o1 - o2); //小根堆
+        // for(int i = 0;i< nums.length ; i++){
+        //     queue.add(nums[i]);
+        // }
+        // for(int j = 0;j < res.length;j++){
+        //     res[j] = queue.poll();
+        // }
+        // return res;
+        //使用快排
+        quickSort(nums,0,nums.length - 1);
+        return nums;
+
+    }
+    private void quickSort(int[] nums,int start,int end){
+        if(start > end) return ;
+        int mid = partition(nums,start,end); //通过一个基准 分成两部分 mid左边的都比基准小，mid右边的都比基准大
+        quickSort(nums,start,mid - 1); //然后递归调用 继续分治排序
+        quickSort(nums,mid+1,end);
+    }
+    private int partition(int[] nums,int start ,int end){
+        int pivot = nums[start];//基准
+        int left = start + 1; //双指针遍历
+        int right = end;
+        while(left <= right){
+            while(left <= right && nums[left] <= pivot) left ++; //如果本来左边的数就小于基准 直接不管 往后走
+            while(left <= right && nums[right] >= pivot) right --; //如果本来右边的数大于基准 也直接不管 往前走
+            if (left <= right){ //此时不满足
+                swap(nums,left,right);//交换两个数位置
+            }
+        }
+        swap(nums,start,right);//将基准和right指针交换 这样right左边全是比他小的 右边全是比他大的 
+        return right;
+    }
+    private void swap(int[] nums,int left,int right){
+        int temp = nums[left];
+        nums[left] = nums[right];
+        nums[right] = temp;
     }
 }
 ~~~
